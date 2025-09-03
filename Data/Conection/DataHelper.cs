@@ -5,6 +5,8 @@ using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ejercicio1_5.Domain;
+using System.Reflection.Metadata;
 
 namespace Ejercicio1_5.Data.Conection
 {
@@ -27,7 +29,7 @@ namespace Ejercicio1_5.Data.Conection
             return _instance;
         }
 
-        public DataTable ExecuteSP(string sp, Dictionary<string, object> parameters = null)
+        public DataTable ExecuteSP(string sp, List<Parameters> parameter = null)
         {
             DataTable dataTable = new DataTable();
             using (SqlConnection _connection = new SqlConnection(_stringconnection))
@@ -37,11 +39,11 @@ namespace Ejercicio1_5.Data.Conection
                 using (SqlCommand cmd = new SqlCommand(sp, _connection))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    if (parameters != null)
+                    if (parameter != null)
                     {
-                        foreach (var param in parameters)
+                        foreach (Parameters p in parameter)
                         {
-                            cmd.Parameters.AddWithValue(param.Key, param.Value);
+                            cmd.Parameters.AddWithValue(p.Name, p.Value);
                         }
                     }
                     using (SqlDataReader reader = cmd.ExecuteReader())

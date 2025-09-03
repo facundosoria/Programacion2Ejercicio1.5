@@ -36,9 +36,9 @@ namespace Ejercicio1_5.Data.Detalles_Factura
         public Domain.DetalleFactura Get(int idDetalle)
         {
             Domain.DetalleFactura detalle = null;
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Domain.Parameters>
             {
-                { "@IdDetalle", idDetalle }
+                new Domain.Parameters { Name = "@IdDetalle", Value = idDetalle }
             };
             var dt = _dataHelper.ExecuteSP("GetDetalleFacturaById", parameters);
             if (dt.Rows.Count > 0)
@@ -58,9 +58,9 @@ namespace Ejercicio1_5.Data.Detalles_Factura
         public List<Domain.DetalleFactura> GetByFactura(int nroFactura)
         {
             List<Domain.DetalleFactura> detalles = new List<Domain.DetalleFactura>();
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Domain.Parameters>
             {
-                { "@NroFactura", nroFactura }
+                new Domain.Parameters { Name = "@NroFactura", Value = nroFactura }
             };
             var dt = _dataHelper.ExecuteSP("GetDetalleFacturaByFactura", parameters);
             foreach (System.Data.DataRow row in dt.Rows)
@@ -78,31 +78,31 @@ namespace Ejercicio1_5.Data.Detalles_Factura
 
         public void Add(Domain.DetalleFactura detalle)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Domain.Parameters>
             {
-                { "@NroFactura", detalle.NroFactura },
-                { "@IdArticulo", detalle.Articulo?.IdArticulo },
-                { "@Cantidad", detalle.Cantidad }
+                new Domain.Parameters { Name = "@NroFactura", Value = detalle.NroFactura },
+                new Domain.Parameters { Name = "@IdArticulo", Value = detalle.Articulo?.IdArticulo },
+                new Domain.Parameters { Name = "@Cantidad", Value = detalle.Cantidad }
             };
             _dataHelper.ExecuteSP("InsertDetalleFactura", parameters);
         }
 
         public void Update(Domain.DetalleFactura detalle)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Domain.Parameters>
             {
-                { "@IdDetalle", detalle.IdDetalle },
-                { "@IdArticulo", detalle.Articulo?.IdArticulo },
-                { "@Cantidad", detalle.Cantidad }
+                new Domain.Parameters { Name = "@IdDetalle", Value = detalle.IdDetalle },
+                new Domain.Parameters { Name = "@IdArticulo", Value = detalle.Articulo?.IdArticulo },
+                new Domain.Parameters { Name = "@Cantidad", Value = detalle.Cantidad }
             };
             _dataHelper.ExecuteSP("UpdateDetalleFactura", parameters);
         }
 
         public void Delete(int idDetalle)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Domain.Parameters>
             {
-                { "@IdDetalle", idDetalle }
+                new Domain.Parameters { Name = "@IdDetalle", Value = idDetalle }
             };
             _dataHelper.ExecuteSP("DeleteDetalleFactura", parameters);
         }

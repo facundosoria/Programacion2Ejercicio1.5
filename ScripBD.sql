@@ -260,9 +260,4 @@ BEGIN
 END
 GO
 
-
-select * 
-from DetalleFactura
-
-select *
-from FormaPago
+SELECT * FROM DetalleFactura WHERE NroFactura = 1

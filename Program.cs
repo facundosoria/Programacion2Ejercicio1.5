@@ -110,9 +110,10 @@ while (!salir)
                 agregarMas = Console.ReadLine()?.Trim().ToLower() == "s";
             }
             serviceFactura.Add(nueva);
-            // Obtener el NroFactura generado (asumiendo que se puede recuperar el último insertado)
             var facturas = serviceFactura.GetAll();
-            var facturaCreada = facturas.OrderByDescending(f => f.NroFactura).FirstOrDefault(f => f.Cliente == nueva.Cliente && f.Fecha == nueva.Fecha);
+            var facturaCreada = facturas.OrderByDescending(f => f.NroFactura)
+                .FirstOrDefault(f => f.Cliente == nueva.Cliente && f.Fecha == nueva.Fecha);
+
             if (facturaCreada != null)
             {
                 foreach (var det in nueva.Detalles)

@@ -31,9 +31,9 @@ namespace Ejercicio1_5.Data.Articulo
         public Domain.Articulo? GetById(int id)
         {
             Domain.Articulo? articulo = null;
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@IdArticulo", id }
+                new Parameters { Name = "@IdArticulo", Value = id }
             };
             var dt = _dataHelper.ExecuteSP("GetArticuloById", parameters);
             if (dt.Rows.Count > 0)
@@ -50,28 +50,28 @@ namespace Ejercicio1_5.Data.Articulo
 
         public void Add(Domain.Articulo articulo)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@Nombre", articulo.Nombre }
+                new Parameters { Name = "@Nombre", Value = articulo.Nombre }
             };
             _dataHelper.ExecuteSP("InsertArticulo", parameters);
         }
 
         public void Update(Domain.Articulo articulo)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@IdArticulo", articulo.IdArticulo },
-                { "@Nombre", articulo.Nombre }
+                new Parameters { Name = "@IdArticulo", Value = articulo.IdArticulo },
+                new Parameters { Name = "@Nombre", Value = articulo.Nombre }
             };
             _dataHelper.ExecuteSP("UpdateArticulo", parameters);
         }
 
         public void Delete(int id)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@IdArticulo", id }
+                new Parameters { Name = "@IdArticulo", Value = id }
             };
             _dataHelper.ExecuteSP("DeleteArticulo", parameters);
         }

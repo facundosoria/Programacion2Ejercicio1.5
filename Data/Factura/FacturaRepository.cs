@@ -4,6 +4,7 @@ using Ejercicio1_5.Data.Conection;
 using Ejercicio1_5.Data.FormaPago;
 using Ejercicio1_5.Data.Detalles_Factura;
 
+
 namespace Ejercicio1_5.Data.Factura
 {
     public class FacturaRepository : IFacturaRepository
@@ -35,15 +36,16 @@ namespace Ejercicio1_5.Data.Factura
 
     public Domain.Factura GetById(int nroFactura)
         {
-            var parameters = new Dictionary<string, object>
+            Domain.Factura? factura = null;
+            var parameters = new List<Parameters>
             {
-                { "@NroFactura", nroFactura }
+                new Parameters { Name = "@NroFactura", Value = nroFactura }
             };
             var dt = _dataHelper.ExecuteSP("GetFacturaById", parameters);
             if (dt.Rows.Count > 0)
             {
                 var row = dt.Rows[0];
-                return new Domain.Factura
+                factura =new Domain.Factura
                 {
                     NroFactura = Convert.ToInt32(row["NroFactura"]),
                     Fecha = Convert.ToDateTime(row["Fecha"]),
@@ -52,37 +54,38 @@ namespace Ejercicio1_5.Data.Factura
                     Cliente = row["Cliente"].ToString()
                 };
             }
-            throw new KeyNotFoundException($"Factura con NroFactura {nroFactura} no encontrada.");
+            return factura;
         }
 
-    public void Add(Domain.Factura factura)
+        public void Add(Domain.Factura factura)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@Fecha", factura.Fecha },
-                { "@IdFormaPago", factura.FormaPago?.IdFormaPago },
-                { "@Cliente", factura.Cliente }
+                new Parameters { Name = "@Fecha", Value = factura.Fecha },
+                new Parameters { Name = "@IdFormaPago", Value = factura.FormaPago?.IdFormaPago },
+                new Parameters { Name = "@Cliente", Value = factura.Cliente }
             };
             _dataHelper.ExecuteSP("InsertFactura", parameters);
+            
         }
 
     public void Update(Domain.Factura factura)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@NroFactura", factura.NroFactura },
-                { "@Fecha", factura.Fecha },
-                { "@IdFormaPago", factura.FormaPago.IdFormaPago },
-                { "@Cliente", factura.Cliente }
+                new Parameters { Name = "@NroFactura", Value = factura.NroFactura },
+                new Parameters { Name = "@Fecha", Value = factura.Fecha },
+                new Parameters { Name = "@IdFormaPago", Value = factura.FormaPago.IdFormaPago },
+                new Parameters { Name = "@Cliente", Value = factura.Cliente }
             };
             _dataHelper.ExecuteSP("UpdateFactura", parameters);
         }
 
         public void Delete(int nroFactura)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@NroFactura", nroFactura }
+                new Parameters { Name = "@NroFactura", Value = nroFactura }
             };
             _dataHelper.ExecuteSP("DeleteFactura", parameters);
         }

@@ -31,9 +31,9 @@ namespace Ejercicio1_5.Data.FormaPago
 
     public Domain.FormaPago GetById(int id)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@IdFormaPago", id }
+                new Parameters { Name = "@IdFormaPago", Value = id }
             };
             var dt = _dataHelper.ExecuteSP("GetFormaPagoById", parameters);
             if (dt.Rows.Count > 0)
@@ -51,28 +51,28 @@ namespace Ejercicio1_5.Data.FormaPago
 
     public void Add(Domain.FormaPago formaPago)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@Nombre", formaPago.Nombre }
+                new Parameters { Name = "@Nombre", Value = formaPago.Nombre }
             };
             _dataHelper.ExecuteSP("AddFormaPago", parameters);
         }
 
     public void Update(Domain.FormaPago formaPago)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@IdFormaPago", formaPago.IdFormaPago },
-                { "@Nombre", formaPago.Nombre }
+                new Parameters { Name = "@IdFormaPago", Value = formaPago.IdFormaPago },
+                new Parameters { Name = "@Nombre", Value = formaPago.Nombre }
             };
             _dataHelper.ExecuteSP("UpdateFormaPago", parameters);
         }
 
         public void Delete(int id)
         {
-            var parameters = new Dictionary<string, object>
+            var parameters = new List<Parameters>
             {
-                { "@IdFormaPago", id }
+                new Parameters { Name = "@IdFormaPago", Value = id }
             };
             _dataHelper.ExecuteSP("DeleteFormaPago", parameters);
         }

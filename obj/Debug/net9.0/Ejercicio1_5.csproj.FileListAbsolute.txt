@@ -62,3 +62,4 @@
 /Users/facundosoria/dev/Utn/Programacio-2/Ejercicio1_5/Ejercicio1_5/bin/Debug/net9.0/runtimes/win/lib/net9.0/System.Diagnostics.EventLog.dll
 /Users/facundosoria/dev/Utn/Programacio-2/Ejercicio1_5/Ejercicio1_5/bin/Debug/net9.0/runtimes/win/lib/net9.0/System.Security.Cryptography.Pkcs.dll
 /Users/facundosoria/dev/Utn/Programacio-2/Ejercicio1_5/Ejercicio1_5/obj/Debug/net9.0/Ejercici.0973ED1A.Up2Date
+/Users/facundosoria/dev/Utn/Programacio-2/Ejercicio1_5/Ejercicio1_5/obj/Debug/net9.0/Ejercicio1_5.sourcelink.json
