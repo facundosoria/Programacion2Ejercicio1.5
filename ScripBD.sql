@@ -259,5 +259,3 @@ BEGIN
     DELETE FROM DetalleFactura WHERE IdDetalle = @IdDetalle
 END
 GO
-
-SELECT * FROM DetalleFactura WHERE NroFactura = 1
