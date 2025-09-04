@@ -35,7 +35,6 @@ namespace Ejercicio1_5.Data.Conection
             using (SqlConnection _connection = new SqlConnection(_stringconnection))
             {
                 _connection.Open();
-                Console.WriteLine("Conexión On papa.");
                 using (SqlCommand cmd = new SqlCommand(sp, _connection))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;

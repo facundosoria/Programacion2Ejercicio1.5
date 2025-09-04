@@ -20,14 +20,16 @@ namespace Ejercicio1_5.Data.Factura
         {
             var facturas = new List<Domain.Factura>();
             var dt = _dataHelper.ExecuteSP("GetAllFactura");
+            var df = new Detalle_FacturaRepository(_dataHelper);
+            var fp = new FormaPagoRepository(_dataHelper);
             foreach (System.Data.DataRow row in dt.Rows)
             {
                 facturas.Add(new Domain.Factura
                 {
                     NroFactura = Convert.ToInt32(row["NroFactura"]),
                     Fecha = Convert.ToDateTime(row["Fecha"]),
-                    Detalles = new Detalle_FacturaRepository(_dataHelper).GetByFactura(Convert.ToInt32(row["NroFactura"])),
-                    FormaPago = new FormaPagoRepository(_dataHelper).GetById(Convert.ToInt32(row["IdFormaPago"])),
+                    Detalles = df.GetByFactura(Convert.ToInt32(row["NroFactura"])),
+                    FormaPago = fp.GetById(Convert.ToInt32(row["IdFormaPago"])),
                     Cliente = row["Cliente"].ToString()
                 });
             }
@@ -57,17 +59,30 @@ namespace Ejercicio1_5.Data.Factura
             return factura;
         }
 
-        public void Add(Domain.Factura factura)
+public void Add(Domain.Factura factura)
+{
+    var parameters = new List<Parameters>
+    {
+        new Parameters { Name = "@Fecha", Value = factura.Fecha },
+        new Parameters { Name = "@IdFormaPago", Value = factura.FormaPago?.IdFormaPago },
+        new Parameters { Name = "@Cliente", Value = factura.Cliente }
+    };
+
+    var dt = _dataHelper.ExecuteSP("InsertFactura", parameters);
+
+    int idFactura = Convert.ToInt32(dt.Rows[0]["NroFactura"]);
+    factura.NroFactura = idFactura;
+
+    if (factura.Detalles != null && factura.Detalles.Count > 0)
+    {
+        var detRepo = new Detalle_FacturaRepository(_dataHelper);
+        foreach (var det in factura.Detalles)
         {
-            var parameters = new List<Parameters>
-            {
-                new Parameters { Name = "@Fecha", Value = factura.Fecha },
-                new Parameters { Name = "@IdFormaPago", Value = factura.FormaPago?.IdFormaPago },
-                new Parameters { Name = "@Cliente", Value = factura.Cliente }
-            };
-            _dataHelper.ExecuteSP("InsertFactura", parameters);
-            
+            det.NroFactura = idFactura;
+            detRepo.Add(det);
         }
+    }
+}
 
     public void Update(Domain.Factura factura)
         {
@@ -80,6 +95,7 @@ namespace Ejercicio1_5.Data.Factura
             };
             _dataHelper.ExecuteSP("UpdateFactura", parameters);
         }
+
 
         public void Delete(int nroFactura)
         {

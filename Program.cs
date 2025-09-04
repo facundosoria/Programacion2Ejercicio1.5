@@ -79,8 +79,6 @@ while (!salir)
             var dataHelperDetalle = DataHelper.GetIntance();
             ArticuloRepository  articuloRepo = new ArticuloRepository(dataHelperDetalle);
             ServiceArticulo serviceArticulo = new ServiceArticulo(articuloRepo);
-            Detalle_FacturaRepository detalleRepo = new Detalle_FacturaRepository(dataHelperDetalle);
-            ServiceDetalleFactura serviceDetalle = new ServiceDetalleFactura(detalleRepo);
             bool agregarMas = true;
             while (agregarMas)
             {
@@ -110,23 +108,6 @@ while (!salir)
                 agregarMas = Console.ReadLine()?.Trim().ToLower() == "s";
             }
             serviceFactura.Add(nueva);
-            var facturas = serviceFactura.GetAll();
-            var facturaCreada = facturas.OrderByDescending(f => f.NroFactura)
-                .FirstOrDefault(f => f.Cliente == nueva.Cliente && f.Fecha == nueva.Fecha);
-
-            if (facturaCreada != null)
-            {
-                foreach (var det in nueva.Detalles)
-                {
-                    det.NroFactura = facturaCreada.NroFactura;
-                    serviceDetalle.Add(det);
-                }
-                Console.WriteLine("Factura y detalles guardados correctamente.");
-            }
-            else
-            {
-                Console.WriteLine("Factura creada, pero no se pudo guardar el detalle (no se encontró la factura recién creada).");
-            }
             break;
         case "4":
             Console.Write("Nro de factura a modificar: ");
