@@ -10,6 +10,6 @@ namespace Ejercicio1_5.Data.Conection
 {
     public interface IDataHelper
     {
-        DataTable ExecuteSP(string sp, List<Parameters> parameters = null);
+           DataTable ExecuteSP(string sp, List<Parameters> parameters = null);
     }
 }

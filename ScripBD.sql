@@ -179,7 +179,22 @@ CREATE PROCEDURE InsertFactura
     @Cliente NVARCHAR(100)
 AS
 BEGIN
-    INSERT INTO Factura (Fecha, IdFormaPago, Cliente) VALUES (@Fecha, @IdFormaPago, @Cliente)
+    INSERT INTO Factura (Fecha, IdFormaPago, Cliente)
+    VALUES (@Fecha, @IdFormaPago, @Cliente)
+END
+GO
+
+ALTER PROCEDURE InsertFactura
+    @Fecha DATE,
+    @IdFormaPago INT,
+    @Cliente NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO Factura (Fecha, IdFormaPago, Cliente)
+    VALUES (@Fecha, @IdFormaPago, @Cliente);
+
+    SELECT CAST(SCOPE_IDENTITY() AS INT) AS NroFactura;
 END
 GO
 
@@ -202,6 +217,13 @@ AS
 BEGIN
     DELETE FROM DetalleFactura WHERE NroFactura = @NroFactura;
     DELETE FROM Factura WHERE NroFactura = @NroFactura;
+END
+GO
+
+CREATE PROCEDURE GetMaxNroFactura
+AS
+BEGIN
+    SELECT ISNULL(MAX(NroFactura), 0) AS MaxNroFactura FROM Factura
 END
 GO
 
