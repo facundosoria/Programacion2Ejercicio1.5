@@ -24,7 +24,7 @@ namespace Ejercicio1_5.Data.Factura
         {
             var facturas = new List<Domain.Factura>();
 
-            // 1. Leer solo los datos básicos de la factura
+          
             using (var cmd = new SqlCommand("GetAllFactura", _connection, _transaction))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -37,14 +37,14 @@ namespace Ejercicio1_5.Data.Factura
                             NroFactura = Convert.ToInt32(reader["NroFactura"]),
                             Fecha = Convert.ToDateTime(reader["Fecha"]),
                             Cliente = reader["Cliente"].ToString(),
-                            // Guardá IdFormaPago para después
+                            
                             FormaPago = new Domain.FormaPago { IdFormaPago = Convert.ToInt32(reader["IdFormaPago"]) }
                         });
                     }
                 }
             }
 
-            // 2. Ahora, para cada factura, cargar detalles y forma de pago
+            
             foreach (var factura in facturas)
             {
                 factura.Detalles = new Detalle_FacturaRepository(_connection, _transaction)
@@ -99,7 +99,7 @@ namespace Ejercicio1_5.Data.Factura
 
         public void Add(Domain.Factura factura)
         {
-            // Insertar la factura principal y obtener el NroFactura generado
+            
             using (var cmd = new SqlCommand("InsertFactura", _connection, _transaction))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -107,12 +107,12 @@ namespace Ejercicio1_5.Data.Factura
                 cmd.Parameters.AddWithValue("@IdFormaPago", factura.FormaPago.IdFormaPago);
                 cmd.Parameters.AddWithValue("@Cliente", factura.Cliente);
 
-                // Ejecutar y obtener el NroFactura generado
+             
                 var nroFactura = (int)cmd.ExecuteScalar();
                 factura.NroFactura = nroFactura;
             }
 
-            // Insertar los detalles
+           
             if (factura.Detalles != null)
             {
                 var detalleRepo = new Detalle_FacturaRepository(_connection, _transaction);
@@ -126,7 +126,7 @@ namespace Ejercicio1_5.Data.Factura
 
         public void Update(Domain.Factura factura)
         {
-            
+
             using (var cmd = new SqlCommand("UpdateFactura", _connection, _transaction))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
