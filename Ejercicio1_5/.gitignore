@@ -1,0 +1,5 @@
+/bin
+/obj
+/.vscode
+sqlserver2022.session.sql
+.env
