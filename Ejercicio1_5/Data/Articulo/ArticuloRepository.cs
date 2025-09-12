@@ -30,7 +30,8 @@ namespace Ejercicio1_5.Data.Articulo
                         articulos.Add(new Domain.Articulo
                         {
                             IdArticulo = Convert.ToInt32(reader["IdArticulo"]),
-                            Nombre = reader["Nombre"].ToString()
+                            Nombre = reader["Nombre"].ToString(),
+                            PrecioUnitario = Convert.ToDecimal(reader["PrecioUnitario"])
                         });
                     }
                 }
@@ -53,7 +54,8 @@ namespace Ejercicio1_5.Data.Articulo
                         articulo = new Domain.Articulo
                         {
                             IdArticulo = Convert.ToInt32(reader["IdArticulo"]),
-                            Nombre = reader["Nombre"].ToString()
+                            Nombre = reader["Nombre"].ToString(),
+                            PrecioUnitario = Convert.ToDecimal(reader["PrecioUnitario"])
                         };
                     }
                 }
@@ -67,6 +69,7 @@ namespace Ejercicio1_5.Data.Articulo
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Nombre", articulo.Nombre);
+                cmd.Parameters.AddWithValue("@PrecioUnitario", articulo.PrecioUnitario);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -78,6 +81,7 @@ namespace Ejercicio1_5.Data.Articulo
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@IdArticulo", articulo.IdArticulo);
                 cmd.Parameters.AddWithValue("@Nombre", articulo.Nombre);
+                cmd.Parameters.AddWithValue("@PrecioUnitario", articulo.PrecioUnitario);
                 cmd.ExecuteNonQuery();
             }
         }

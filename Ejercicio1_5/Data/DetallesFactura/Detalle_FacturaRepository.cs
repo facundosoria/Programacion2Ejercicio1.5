@@ -45,6 +45,7 @@ namespace Ejercicio1_5.Data.Detalles_Factura
                         });
                     }
                 }
+                
 
                 foreach (var detalle in detalles)
                 {
@@ -54,7 +55,7 @@ namespace Ejercicio1_5.Data.Detalles_Factura
             return detalles;
         }
 
-        public DetalleFactura Get(int idDetalle)
+        public DetalleFactura GetById(int idDetalle)
         {
             DetalleFactura detalle = null;
             using (var cmd = new SqlCommand("GetDetalleFacturaById", _connection, _transaction))

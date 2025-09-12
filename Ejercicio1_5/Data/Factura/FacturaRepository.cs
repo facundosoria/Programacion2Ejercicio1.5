@@ -99,18 +99,34 @@ namespace Ejercicio1_5.Data.Factura
 
         public void Add(Domain.Factura factura)
         {
+            // Insertar la factura principal y obtener el NroFactura generado
             using (var cmd = new SqlCommand("InsertFactura", _connection, _transaction))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Fecha", factura.Fecha);
                 cmd.Parameters.AddWithValue("@IdFormaPago", factura.FormaPago.IdFormaPago);
                 cmd.Parameters.AddWithValue("@Cliente", factura.Cliente);
-                cmd.ExecuteNonQuery();
+
+                // Ejecutar y obtener el NroFactura generado
+                var nroFactura = (int)cmd.ExecuteScalar();
+                factura.NroFactura = nroFactura;
+            }
+
+            // Insertar los detalles
+            if (factura.Detalles != null)
+            {
+                var detalleRepo = new Detalle_FacturaRepository(_connection, _transaction);
+                foreach (var detalle in factura.Detalles)
+                {
+                    detalle.NroFactura = factura.NroFactura;
+                    detalleRepo.Add(detalle);
+                }
             }
         }
 
         public void Update(Domain.Factura factura)
         {
+            
             using (var cmd = new SqlCommand("UpdateFactura", _connection, _transaction))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -119,7 +135,24 @@ namespace Ejercicio1_5.Data.Factura
                 cmd.Parameters.AddWithValue("@IdFormaPago", factura.FormaPago.IdFormaPago);
                 cmd.Parameters.AddWithValue("@Cliente", factura.Cliente);
                 cmd.ExecuteNonQuery();
-            } 
+            }
+
+            var detalleRepo = new Detalle_FacturaRepository(_connection, _transaction);
+            var detallesExistentes = detalleRepo.GetByFactura(factura.NroFactura);
+            foreach (var detalle in detallesExistentes)
+            {
+                detalleRepo.Delete(detalle.IdDetalle);
+            }
+
+
+            if (factura.Detalles != null)
+            {
+                foreach (var detalle in factura.Detalles)
+                {
+                    detalle.NroFactura = factura.NroFactura;
+                    detalleRepo.Add(detalle);
+                }
+            }
         }
 
         public void Delete(int nroFactura)

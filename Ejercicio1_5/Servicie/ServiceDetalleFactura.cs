@@ -1,20 +1,58 @@
+
 using Ejercicio1_5.Domain;
 using Ejercicio1_5.Data.Detalles_Factura;
+using Ejercicio1_5.Data;
 
 namespace Ejercicio1_5.Servicie
 {
     public class ServiceDetalleFactura
     {
-        private readonly IDetalle_FacturaRepository _repo;
-        public ServiceDetalleFactura(IDetalle_FacturaRepository repo)
+        private readonly string _connection;
+        public ServiceDetalleFactura(string connection)
         {
-            _repo = repo;
+            _connection = connection;
         }
 
-        public List<DetalleFactura> GetAll() => _repo.GetAll();
-        public DetalleFactura? GetById(int id) => _repo.Get(id);
-        public void Add(DetalleFactura detalle) => _repo.Add(detalle);
-        public void Update(DetalleFactura detalle) => _repo.Update(detalle);
-        public void Delete(int id) => _repo.Delete(id);
+        public List<DetalleFactura> GetAll()
+        {
+            List<DetalleFactura> detalles = new List<DetalleFactura>();
+            using (var unitOfWork = new UnitOfWork(_connection))
+            {
+                detalles = unitOfWork.DetallesFactura.GetAll();
+                unitOfWork.Commit();
+            }       
+            return detalles;
+        }
+        public DetalleFactura? GetById(int id)
+        {
+            using (var unitOfWork = new UnitOfWork(_connection))
+            {
+                return unitOfWork.DetallesFactura.GetById(id);
+            }
+        }
+        public void Add(DetalleFactura detalle)
+        {
+            using (var unitOfWork = new UnitOfWork(_connection))
+            {
+                unitOfWork.DetallesFactura.Add(detalle);
+                unitOfWork.Commit();
+            }
+        }
+        public void Update(DetalleFactura detalle)
+        {
+            using (var unitOfWork = new UnitOfWork(_connection))
+            {
+                unitOfWork.DetallesFactura.Update(detalle);
+                unitOfWork.Commit();
+            }
+        }
+        public void Delete(int id)
+        {
+            using (var unitOfWork = new UnitOfWork(_connection))
+            {
+                unitOfWork.DetallesFactura.Delete(id);
+                unitOfWork.Commit();
+            }
+        }
     }
 }

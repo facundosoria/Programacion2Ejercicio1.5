@@ -11,7 +11,7 @@ namespace Ejercicio1_5.Data.Detalles_Factura
     {
         List<Domain.DetalleFactura> GetAll();
         List<Domain.DetalleFactura> GetByFactura(int idFactura);
-        Domain.DetalleFactura Get(int idDetalle);
+        Domain.DetalleFactura GetById(int idDetalle);
         void Add(Domain.DetalleFactura detalle);
         void Update(Domain.DetalleFactura detalle);
         void Delete(int idDetalle);
