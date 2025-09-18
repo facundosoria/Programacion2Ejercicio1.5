@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Ejercicio1_5.Servicie;
 using Ejercicio1_5.Domain;
+using Ejercicio1_5.Api.Dto;
 
 namespace Ejercicio1_5.Api.Controllers
 {
@@ -8,19 +9,37 @@ namespace Ejercicio1_5.Api.Controllers
     [Route("api/[controller]")]
     public class DetalleFacturaController : ControllerBase
     {
-        private readonly ServiceDetalleFactura _service;
+        private readonly IServiceDetalleFactura _service;
 
-        public DetalleFacturaController(ServiceDetalleFactura service)
+        public DetalleFacturaController(IServiceDetalleFactura service)
         {
             _service = service;
         }
+
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult Get()
         {
             try
             {
-                List<DetalleFactura> detalles = _service.GetAll();
-                return Ok(detalles);
+                var detalles = _service.GetAll();
+                var dtos = new List<DetalleFacturaFullDto>();
+                foreach (var d in detalles)
+                {
+                    var dto = new DetalleFacturaFullDto();
+                    dto.IdDetalle = d.IdDetalle;
+                    dto.NroFactura = d.NroFactura;
+                    dto.Cantidad = d.Cantidad;
+                    if (d.IdArticuloNavigation != null)
+                    {
+                        dto.Articulos.Add(new ArticuloFullDto {
+                            IdArticulo = d.IdArticuloNavigation.IdArticulo,
+                            Nombre = d.IdArticuloNavigation.Nombre,
+                            PrecioUnitario = d.IdArticuloNavigation.PrecioUnitario
+                        });
+                    }
+                    dtos.Add(dto);
+                }
+                return Ok(dtos);
             }
             catch (Exception ex)
             {
@@ -28,28 +47,51 @@ namespace Ejercicio1_5.Api.Controllers
             }
         }
 
+
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public ActionResult GetById(int id)
         {
             try
             {
                 var detalle = _service.GetById(id);
                 if (detalle == null) return NotFound();
-                return Ok(detalle);
+                var dto = new DetalleFacturaFullDto();
+                dto.IdDetalle = detalle.IdDetalle;
+                dto.NroFactura = detalle.NroFactura;
+                dto.Cantidad = detalle.Cantidad;
+                if (detalle.IdArticuloNavigation != null)
+                {
+                    dto.Articulos.Add(new ArticuloFullDto {
+                        IdArticulo = detalle.IdArticuloNavigation.IdArticulo,
+                        Nombre = detalle.IdArticuloNavigation.Nombre,
+                        PrecioUnitario = detalle.IdArticuloNavigation.PrecioUnitario
+                    });
+                }
+                return Ok(dto);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
+
 
         [HttpPost]
-        public IActionResult Add([FromBody] DetalleFactura detalle)
+        public ActionResult Add([FromBody] DetalleFacturaFullDto dto)
         {
             try
             {
+                var detalle = new DetalleFactura();
+                detalle.NroFactura = dto.NroFactura;
+                detalle.Cantidad = dto.Cantidad;
+                // Si hay artículos en el DTO, tomar el primero para asociar
+                if (dto.Articulos != null && dto.Articulos.Count > 0)
+                {
+                    detalle.IdArticulo = dto.Articulos[0].IdArticulo;
+                }
                 _service.Add(detalle);
-                return CreatedAtAction(nameof(GetById), new { id = detalle.IdDetalle }, detalle);
+                dto.IdDetalle = detalle.IdDetalle;
+                return CreatedAtAction(nameof(GetById), new { id = dto.IdDetalle }, dto);
             }
             catch (Exception ex)
             {
@@ -57,12 +99,20 @@ namespace Ejercicio1_5.Api.Controllers
             }
         }
 
+
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] DetalleFactura detalle)
+        public IActionResult Update(int id, [FromBody] DetalleFacturaFullDto dto)
         {
             try
             {
-                detalle.IdDetalle = id;
+                var detalle = _service.GetById(id);
+                if (detalle == null) return NotFound();
+                detalle.NroFactura = dto.NroFactura;
+                detalle.Cantidad = dto.Cantidad;
+                if (dto.Articulos != null && dto.Articulos.Count > 0)
+                {
+                    detalle.IdArticulo = dto.Articulos[0].IdArticulo;
+                }
                 _service.Update(detalle);
                 return NoContent();
             }
@@ -72,11 +122,14 @@ namespace Ejercicio1_5.Api.Controllers
             }
         }
 
+
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
             try
             {
+                var detalle = _service.GetById(id);
+                if (detalle == null) return NotFound();
                 _service.Delete(id);
                 return NoContent();
             }

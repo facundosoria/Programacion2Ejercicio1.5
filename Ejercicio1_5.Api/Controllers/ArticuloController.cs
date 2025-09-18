@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Ejercicio1_5.Servicie;
 using Ejercicio1_5.Domain;
-
+using Ejercicio1_5.Api.Dto;
+using System.Collections.Generic;
 
 namespace Ejercicio1_5.Api.Controllers
 {
@@ -9,20 +10,29 @@ namespace Ejercicio1_5.Api.Controllers
     [Route("api/[controller]")]
     public class ArticuloController : ControllerBase
     {
-        private readonly ServiceArticulo _service;
+        private readonly IServiceArticulo _service;
 
-        public ArticuloController(ServiceArticulo service)
+        public ArticuloController(IServiceArticulo service)
         {
             _service = service;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult Get()
         {
             try
             {
-                List<Articulo> articulos = _service.GetAll();
-                return Ok(articulos);
+                var articulos = _service.GetAll();
+                var dtos = new List<ArticuloFullDto>();
+                foreach (var a in articulos)
+                {
+                    var dto = new ArticuloFullDto();
+                    dto.IdArticulo = a.IdArticulo;
+                    dto.Nombre = a.Nombre;
+                    dto.PrecioUnitario = a.PrecioUnitario;
+                    dtos.Add(dto);
+                }
+                return Ok(dtos);
             }
             catch (Exception ex)
             {
@@ -31,13 +41,19 @@ namespace Ejercicio1_5.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public ActionResult GetById(int id)
         {
             try
             {
                 var articulo = _service.GetById(id);
                 if (articulo == null) return NotFound();
-                return Ok(articulo);
+
+                var dto = new ArticuloFullDto();
+                dto.IdArticulo = articulo.IdArticulo;
+                dto.Nombre = articulo.Nombre;
+                dto.PrecioUnitario = articulo.PrecioUnitario;
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -46,12 +62,18 @@ namespace Ejercicio1_5.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add([FromBody] Articulo articulo)
+        public ActionResult Add([FromBody] ArticuloFullDto dto)
         {
             try
             {
+                var articulo = new Articulo();
+                articulo.Nombre = dto.Nombre;
+                articulo.PrecioUnitario = dto.PrecioUnitario;
+
                 _service.Add(articulo);
-                return CreatedAtAction(nameof(GetById), new { id = articulo.IdArticulo }, articulo);
+                dto.IdArticulo = articulo.IdArticulo;
+
+                return CreatedAtAction(nameof(GetById), new { id = dto.IdArticulo }, dto);
             }
             catch (Exception ex)
             {
@@ -60,12 +82,17 @@ namespace Ejercicio1_5.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Articulo articulo)
+        public IActionResult Update(int id, [FromBody] ArticuloSimpleDto dto)
         {
             try
             {
-                articulo.IdArticulo = id;
+                var articulo = _service.GetById(id);
+                if (articulo == null) return NotFound();
+
+                articulo.Nombre = dto.Nombre;
+                articulo.PrecioUnitario = dto.PrecioUnitario;
                 _service.Update(articulo);
+
                 return NoContent();
             }
             catch (Exception ex)
@@ -79,6 +106,9 @@ namespace Ejercicio1_5.Api.Controllers
         {
             try
             {
+                var articulo = _service.GetById(id);
+                if (articulo == null) return NotFound();
+
                 _service.Delete(id);
                 return NoContent();
             }
