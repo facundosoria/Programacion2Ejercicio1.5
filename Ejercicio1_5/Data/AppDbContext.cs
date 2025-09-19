@@ -55,7 +55,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.NroFacturaNavigation).WithMany(p => p.DetalleFacturas)
                 .HasForeignKey(d => d.NroFactura)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__DetalleFa__NroFa__403A8C7D");
         });
 
