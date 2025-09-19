@@ -101,27 +101,28 @@ namespace Ejercicio1_5.Api.Controllers
 
 
         [HttpPost]
-        public ActionResult Add([FromBody] FacturaCreateDto dto)
+        public ActionResult Add([FromBody] FacturaAddDto dto)
         {
             try
             {
-                var factura = new Factura();
-                factura.Fecha = dto.Fecha;
-                factura.IdFormaPago = dto.IdFormaPago;
-                factura.Cliente = dto.Cliente;
-                // Agregar detalles
+                var factura = new Factura
+                {
+                    Fecha = dto.Fecha,
+                    IdFormaPago = dto.IdFormaPago,
+                    Cliente = dto.Cliente,
+                    DetalleFacturas = new List<DetalleFactura>()
+                };
+
                 foreach (var det in dto.Detalles)
                 {
-                    var detalle = new DetalleFactura();
-                    detalle.Cantidad = det.Cantidad;
-                    if (det.Articulos != null && det.Articulos.Count > 0)
+                    var detalle = new DetalleFactura
                     {
-                        detalle.IdArticulo = det.Articulos[0].IdArticulo;
-                    }
+                        Cantidad = det.Cantidad,
+                        IdArticulo = det.Articulo != null ? det.Articulo.IdArticulo : 0
+                    };
                     factura.DetalleFacturas.Add(detalle);
                 }
                 _service.Add(factura);
-                // Devolver el DTO de respuesta con el nombre de la forma de pago si es necesario
                 return CreatedAtAction(nameof(GetById), new { id = factura.NroFactura }, null);
             }
             catch (Exception ex)
@@ -132,7 +133,7 @@ namespace Ejercicio1_5.Api.Controllers
 
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] FacturaCreateDto dto)
+        public IActionResult Update(int id, [FromBody] FacturaAddDto dto)
         {
             try
             {
@@ -145,12 +146,11 @@ namespace Ejercicio1_5.Api.Controllers
                 factura.DetalleFacturas.Clear();
                 foreach (var det in dto.Detalles)
                 {
-                    var detalle = new DetalleFactura();
-                    detalle.Cantidad = det.Cantidad;
-                    if (det.Articulos != null && det.Articulos.Count > 0)
+                    var detalle = new DetalleFactura
                     {
-                        detalle.IdArticulo = det.Articulos[0].IdArticulo;
-                    }
+                        Cantidad = det.Cantidad,
+                        IdArticulo = det.Articulo != null ? det.Articulo.IdArticulo : 0
+                    };
                     factura.DetalleFacturas.Add(detalle);
                 }
                 _service.Update(factura);

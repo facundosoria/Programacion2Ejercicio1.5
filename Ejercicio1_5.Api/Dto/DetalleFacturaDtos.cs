@@ -5,7 +5,7 @@ namespace Ejercicio1_5.Api.Dto
     {
 
         public ArticuloSimpleDto Articulo { get; set; }
-         public int Cantidad { get; set; }
+        public int Cantidad { get; set; }
     }
 
 
@@ -18,12 +18,10 @@ namespace Ejercicio1_5.Api.Dto
     }
 
 
-    public class DetalleFacturaCreateDto
+    public class DetalleFacturaAddDto
     {
         public int NroFactura { get; set; }
-        public List<ArticuloAddDto> Articulos { get; set; } = new List<ArticuloAddDto>();
+        public ArticuloAddDto Articulo { get; set; } = new ArticuloAddDto();
         public int Cantidad { get; set; }
     }
-
-
 }

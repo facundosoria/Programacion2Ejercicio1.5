@@ -13,16 +13,26 @@ namespace Ejercicio1_5.Api.Dto
     {
         public int NroFactura { get; set; }
         public DateOnly Fecha { get; set; }
-            public FormaPagoFullDto? FormaPago { get; set; }
+        public FormaPagoFullDto? FormaPago { get; set; }
         public string Cliente { get; set; }
         public List<DetalleFacturaFullDto> Detalles { get; set; } = new List<DetalleFacturaFullDto>();
     }
 
-    public class FacturaCreateDto
+    public class FacturaAddDto
     {
         public DateOnly Fecha { get; set; }
         public int IdFormaPago { get; set; }
         public string Cliente { get; set; }
-        public List<DetalleFacturaCreateDto> Detalles { get; set; } = new List<DetalleFacturaCreateDto>();
+        public List<DetalleFacturaAddDto> Detalles { get; set; } = new List<DetalleFacturaAddDto>();
+    }
+
+    public class FacturaUpdateDto
+    {
+        public int NroFactura { get; set; }
+        public DateOnly Fecha { get; set; }
+        public int IdFormaPago { get; set; }
+        public string Cliente { get; set; }
+        public List<DetalleFacturaAddDto> Detalles { get; set; } = new List<DetalleFacturaAddDto>();
+        
     }
 }

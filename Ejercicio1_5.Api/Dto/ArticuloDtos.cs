@@ -19,9 +19,4 @@ namespace Ejercicio1_5.Api.Dto
     {
         public int IdArticulo { get; set; }
     }
-
-
-
-
-    
 }   
